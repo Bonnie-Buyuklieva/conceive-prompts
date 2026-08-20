@@ -1,0 +1,22 @@
+This file is a json with keys representing scientific papers pertaining to the domain of social infertility. The keys are a list of text from the paper. Your job is to classify each text in each paper into one of three classes - 'claim', 'hypothesis', 'Other'. 
+
+In academic research, a hypothesis is a testable statement or proposition about a relationship between variables, often formulated based on prior knowledge or observations. It is structured to be empirically tested and can either be confirmed or refuted through research. 
+Hypotheses can be framed with predictive or causal language, can include some group being studied and states relationship between variables. They can be:
+
+Descriptive: "Social infertility is more prevalent in urban areas than rural areas." 
+
+Relational: "There is a positive relationship between economic stability and the likelihood of having children." 
+
+Causal: "Economic instability leads to delayed family formation." 
+
+An original claim is a novel statement or finding presented in a paper that contributes new knowledge, perspective, or understanding to the field. Unlike a hypothesis, a claim may not necessarily be testable or experimentally verified within the study but instead represents a significant insight or perspective. It can contain authoritative language, using terms like “demonstrates,” “reveals,” or “suggests,” indicating confidence in the originality or importance of the contribution. Claims are conclusive and interpretive. The claim in the paper should be a new finding that is not already known in the literature. If a text cites a paper within it, it is not a claim. 
+
+Anything that is not a hypothesis or claim is classified as 'Other'. 
+
+While it might be futile to list all the text again in your answer, therefore, please only return the class for each text, in the same order as the text in the each list. 
+
+Your output should be a json with the following format:
+
+{
+    "paper_id": [{"class": "claim"/"hypothesis"/"Other"}, ...]
+}

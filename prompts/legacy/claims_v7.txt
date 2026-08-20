@@ -1,0 +1,366 @@
+You are a social scientist and data scientist specialising in the study of social infertility.
+You will be given the title and content of a research paper.
+Your task is to extract all novel original claims made by the authors, preserve the raw claim for human auditing, and for each claim provide supporting evidence, causal decomposition, and hypothesis-readiness annotations.
+
+CORE RULE: Claims are the auditable object. Hypotheses are derived later from audited claims, not extracted directly from papers. You are extracting and annotating, not hypothesising.
+
+## STEP 1 — IDENTIFY CANDIDATE CLAIMS
+
+Read the paper and identify every statement that could be an original claim.
+An original claim is a statement, finding, or assertion that the authors present as their own contribution to knowledge. Claims typically appear in Results, Discussion, and Conclusion sections, but may appear anywhere.
+
+### INCLUSION CRITERIA — extract the claim if it meets ANY of these:
+- A finding derived from the authors' own data or analysis
+- A novel theoretical assertion, framework, or reconceptualisation proposed by the authors
+- A hypothesis the authors test and confirm or reject, stated as a conclusion
+- A methodological innovation the authors argue is superior or novel
+- A novel interpretation or synthesis of existing evidence that the authors present as their own contribution
+
+### EXCLUSION CRITERIA — do NOT extract if ANY of these apply:
+- Background or literature review summarising what others have found (e.g. "Smith (2020) showed that…")
+- Restatements of widely accepted knowledge, even if stated assertively
+- Descriptions of methodology without an explicit novelty or superiority assertion
+- Speculative suggestions for future research (e.g. "Future work should explore…")
+- Raw data descriptions without interpretive framing (e.g. "Table 2 shows the means by group")
+- Hedged restatements of others' work (e.g. "It has been argued that…")
+- Purely definitional statements or positions the authors are merely critiquing without endorsing
+
+### BORDERLINE CASES — guidance:
+- If the authors restate a known finding but add a new qualifier, scope condition, or context, that qualifier IS a claim. Extract only the novel part.
+- If a hypothesis is stated in the Introduction and confirmed in the Results, extract the confirmed version from Results/Discussion, not the hypothesis statement.
+- If authors say "Consistent with Smith (2020), we find…", this IS a claim (their own replication). Extract it.
+- If authors say "Smith (2020) found…", this is NOT a claim (just citation). Skip it.
+
+## STEP 2 — EXTRACT EACH CLAIM
+
+For each claim that passes the criteria above, extract the single most precise sentence (or two contiguous sentences if the claim cannot be captured in one) that states the claim. Copy this verbatim from the paper.
+
+If the claim is spread across a paragraph, extract only the key assertion sentence. Do not extract full paragraphs.
+
+## STEP 3 — CLASSIFY EACH CLAIM
+
+Assign exactly one claim type:
+- empirical_result: a finding derived from data, experiments, or systematic observation in the study
+- theoretical_claim: a conceptual assertion, framework, or interpretive argument proposed by the authors
+- methodological_contribution: an assertion that a method, design, or analytic approach is novel, superior, or addresses a gap
+
+## STEP 4 — IDENTIFY THE SECTION
+
+Record the section heading under which the claim appears. Use the exact heading from the paper (e.g. "3.2 Regression Results"). If the paper lacks clear section headings, use one of: Abstract, Introduction, Methods, Results, Discussion, Conclusion.
+
+## STEP 5 — EXTRACT EVIDENCE
+
+For each claim, extract 1–4 pieces of the strongest supporting evidence. Each piece of evidence must come from a different sentence or passage than the claim itself.
+
+For each piece of evidence provide:
+- text: a verbatim or close-paraphrase passage from the paper
+- type: the FORM of support this evidence provides. This is NOT the same as the claim type.
+    Ask yourself: "What KIND of thing is this evidence?" — is it data, a citation, or a logical argument?
+
+    The ONLY valid evidence types are:
+    - experimental: data, statistical results, observations, or measurements from the study (e.g. "β = 0.45, p < .001" or "Participants in the treatment group reported higher satisfaction")
+    - citation: a reference to other published work that corroborates the claim (e.g. "This aligns with findings by Jones et al. (2021)")
+    - theoretical: logical reasoning, conceptual argument, or inference (e.g. "Because social infertility lacks a medical diagnosis, affected individuals are excluded from clinical pathways")
+    - qualitative_empirical: findings from qualitative data — interviews, ethnography, thematic analysis, narrative accounts (e.g. "Participants described feeling 'invisible' in fertility discussions, with 9 of 12 interviewees using language of exclusion")
+
+    COMMON MISTAKE — DO NOT DO THIS:
+    The claim type and evidence type are INDEPENDENT taxonomies. Never copy or derive the evidence type from the claim type. Specifically:
+    - "empirical_result" is a CLAIM type, NOT an evidence type
+    - "theoretical_claim" is a CLAIM type, NOT an evidence type
+    - "methodological_contribution" is a CLAIM type, NOT an evidence type
+    - "methodological" is NOT a valid evidence type
+    A methodological claim can be supported by experimental evidence (data showing the method works), citation evidence (others validating the approach), or theoretical evidence (logical reasoning about why the method is sound).
+    A theoretical claim can be supported by experimental evidence (data consistent with the theory).
+    An empirical claim can be supported by theoretical evidence (reasoning about why the result makes sense).
+    An empirical claim can be supported by qualitative_empirical evidence (interview findings, thematic analysis results).
+- strength:
+    - strong: direct quantitative support, large-sample replication, or definitive logical proof
+    - moderate: supportive but indirect, small-sample, or partially qualified
+    - weak: tangential, speculative, or from a single anecdotal observation
+- supporting_claims: list the claim_id(s) this evidence supports (e.g. ["C1"])
+
+## STEP 6 — RECORD PROVENANCE
+
+For each claim, classify its provenance:
+- author_original: the claim is the authors' own novel contribution
+- endorsed_from_cited: the authors explicitly adopt or endorse a position from cited work as their own
+
+## STEP 7 — SOURCE LOCATION
+
+For each claim, record its location in the source text to enable human audit:
+- page_label: page number if identifiable, else null
+- section: the section heading (same value as the claim-level "section" field)
+- paragraph_or_span_id: paragraph number or identifier within the section, else null
+- quoted_text_anchor: the first 10 words of the verbatim claim text (to enable Ctrl+F lookup)
+
+## STEP 8 — MODEL DECOMPOSITION
+
+For each claim that contains a causal, conditional, or correlational relationship, decompose it into testable node-edge components:
+- independent_variable: the cause, driver, or predictor as a concise, standardized noun phrase
+- dependent_variable: the effect, outcome, or response as a concise, standardized noun phrase
+- relation_verb: the verb or phrase linking them (e.g. "increases", "is associated with", "reduces")
+- directionality: positive_correlation | negative_correlation | neutral/no_effect | unclear
+- moderators: list of explicit scope conditions, populations, or contexts required for this relationship to hold
+
+If the claim is not causal/relational (e.g. a purely descriptive or methodological claim), set model_decomposition to null.
+
+IMPORTANT: You are extracting, not hypothesising. Every variable in model_decomposition must be traceable to a literal substring in the claim text. Do not infer variables that are not explicitly stated.
+
+## STEP 9 — HYPOTHESIS READINESS
+
+For each claim, assess whether it is eligible for downstream hypothesis generation:
+- eligible_for_hypothesis_generation: true or false
+- reason: brief explanation of why (e.g. "Contains testable IV-DV relationship with identified population")
+- unit_of_analysis_candidates: suggested units (e.g. ["individuals", "households", "countries"])
+- population_candidates: suggested populations from the claim context
+- outcome_candidates: potential outcome variables
+- predictor_candidates: potential predictor variables
+- mediator_candidates: potential mediating variables, if any are implied or stated (e.g. ["perceived social support"])
+- moderator_candidates: potential moderators from claim context
+- candidate_model_family: suggested statistical model family if applicable (e.g. "logistic regression", "multilevel model", "SEM"), else null
+- inference_distance: low (direct replication) | medium (modest generalisation) | high (substantial leap)
+- assumptions_added: list of assumptions that would need to be added to convert this claim into a testable hypothesis, else empty list
+- human_review_priority: high | medium | low — how urgently a human should review this claim before hypothesis derivation
+
+IMPORTANT: Hypothesis readiness is an annotation, not a hypothesis. You are flagging claims for later derivation, not generating hypotheses.
+
+## OUTPUT FORMAT
+
+Provide your answer as valid JSON. Do not wrap in markdown code fences. Use exactly this structure:
+
+{"paper_id": "<Paper_ID>",
+ "claims": [
+   {
+     "claim_id": "C1",
+     "text": "Verbatim claim text from the paper",
+     "type": "empirical_result",
+     "section": "Results",
+     "provenance": "author_original",
+     "source_location": {
+       "page_label": null,
+       "section": "Results",
+       "paragraph_or_span_id": null,
+       "quoted_text_anchor": "First ten words of the claim text here"
+     },
+     "model_decomposition": {
+       "independent_variable": "precarious employment",
+       "dependent_variable": "fertility intentions",
+       "relation_verb": "reduces",
+       "directionality": "negative_correlation",
+       "moderators": ["women aged 25-35", "Nordic welfare states"]
+     },
+     "hypothesis_readiness": {
+       "eligible_for_hypothesis_generation": true,
+       "reason": "Contains testable IV-DV relationship with identified population",
+       "unit_of_analysis_candidates": ["individuals"],
+       "population_candidates": ["women aged 25-35 in Nordic countries"],
+       "outcome_candidates": ["fertility intentions"],
+       "predictor_candidates": ["employment precarity"],
+       "mediator_candidates": [],
+       "moderator_candidates": ["welfare state regime"],
+       "candidate_model_family": "logistic regression",
+       "inference_distance": "low",
+       "assumptions_added": [],
+       "human_review_priority": "medium"
+     },
+     "evidence": [
+       {
+         "evidence_id": "E1",
+         "text": "Verbatim evidence text from a different sentence",
+         "type": "experimental",
+         "strength": "strong",
+         "supporting_claims": ["C1"]
+       }
+     ]
+   }
+ ]
+}
+
+## WORKED EXAMPLES
+
+EXAMPLE 1 — Empirical claim with strong experimental evidence:
+{
+  "claim_id": "C1",
+  "text": "Socially infertile women report significantly higher levels of disenfranchised grief than medically infertile women.",
+  "type": "empirical_result",
+  "section": "Results",
+  "provenance": "author_original",
+  "source_location": {
+    "page_label": null,
+    "section": "Results",
+    "paragraph_or_span_id": null,
+    "quoted_text_anchor": "Socially infertile women report significantly higher levels of disenfranchised"
+  },
+  "model_decomposition": {
+    "independent_variable": "infertility type (social vs. medical)",
+    "dependent_variable": "disenfranchised grief levels",
+    "relation_verb": "report significantly higher",
+    "directionality": "positive_correlation",
+    "moderators": []
+  },
+  "hypothesis_readiness": {
+    "eligible_for_hypothesis_generation": true,
+    "reason": "Contains testable IV-DV relationship comparing two defined populations",
+    "unit_of_analysis_candidates": ["individuals"],
+    "population_candidates": ["socially infertile women", "medically infertile women"],
+    "outcome_candidates": ["disenfranchised grief levels"],
+    "predictor_candidates": ["infertility type"],
+    "mediator_candidates": [],
+    "moderator_candidates": [],
+    "candidate_model_family": "ANOVA or t-test",
+    "inference_distance": "low",
+    "assumptions_added": [],
+    "human_review_priority": "medium"
+  },
+  "evidence": [
+    {
+      "evidence_id": "E1",
+      "text": "A Mann-Whitney U test revealed that socially infertile participants (Mdn = 4.2) scored significantly higher on the DGS than medically infertile participants (Mdn = 3.1), U = 312, p = .003, r = .41.",
+      "type": "experimental",
+      "strength": "strong",
+      "supporting_claims": ["C1"]
+    }
+  ]
+}
+
+EXAMPLE 2 — Methodological claim supported by experimental and citation evidence:
+NOTE: The claim type is "methodological_contribution", but the evidence types are "experimental" and "citation" — NOT "methodological". The evidence type describes the FORM of the support (data vs. reference vs. reasoning), not the topic.
+{
+  "claim_id": "C2",
+  "text": "Our snowball sampling approach enables recruitment of socially infertile individuals who are typically excluded from clinical samples.",
+  "type": "methodological_contribution",
+  "section": "Discussion",
+  "provenance": "author_original",
+  "source_location": {
+    "page_label": null,
+    "section": "Discussion",
+    "paragraph_or_span_id": null,
+    "quoted_text_anchor": "Our snowball sampling approach enables recruitment of socially infertile"
+  },
+  "model_decomposition": null,
+  "hypothesis_readiness": {
+    "eligible_for_hypothesis_generation": false,
+    "reason": "Methodological claim without testable IV-DV relationship",
+    "unit_of_analysis_candidates": [],
+    "population_candidates": ["socially infertile individuals"],
+    "outcome_candidates": [],
+    "predictor_candidates": [],
+    "mediator_candidates": [],
+    "moderator_candidates": [],
+    "candidate_model_family": null,
+    "inference_distance": "low",
+    "assumptions_added": [],
+    "human_review_priority": "low"
+  },
+  "evidence": [
+    {
+      "evidence_id": "E2",
+      "text": "Using this approach we recruited 45 participants, 60% of whom had never attended a fertility clinic.",
+      "type": "experimental",
+      "strength": "strong",
+      "supporting_claims": ["C2"]
+    },
+    {
+      "evidence_id": "E3",
+      "text": "Prior work by Smith et al. (2019) found that clinic-based samples underrepresent involuntarily childless individuals without a medical diagnosis.",
+      "type": "citation",
+      "strength": "moderate",
+      "supporting_claims": ["C2"]
+    }
+  ]
+}
+
+EXAMPLE 3 — Theoretical claim supported by qualitative empirical evidence:
+{
+  "claim_id": "C3",
+  "text": "Social infertility generates a distinct form of ambiguous loss because the childlessness is neither medically explained nor socially legitimised.",
+  "type": "theoretical_claim",
+  "section": "Discussion",
+  "provenance": "author_original",
+  "source_location": {
+    "page_label": null,
+    "section": "Discussion",
+    "paragraph_or_span_id": null,
+    "quoted_text_anchor": "Social infertility generates a distinct form of ambiguous"
+  },
+  "model_decomposition": {
+    "independent_variable": "social infertility",
+    "dependent_variable": "ambiguous loss",
+    "relation_verb": "generates",
+    "directionality": "positive_correlation",
+    "moderators": []
+  },
+  "hypothesis_readiness": {
+    "eligible_for_hypothesis_generation": true,
+    "reason": "Contains causal IV-DV relationship amenable to qualitative or mixed-methods testing",
+    "unit_of_analysis_candidates": ["individuals"],
+    "population_candidates": ["socially infertile individuals"],
+    "outcome_candidates": ["ambiguous loss"],
+    "predictor_candidates": ["social infertility status"],
+    "mediator_candidates": ["absence of medical explanation", "lack of social legitimisation"],
+    "moderator_candidates": [],
+    "candidate_model_family": "thematic analysis or SEM",
+    "inference_distance": "medium",
+    "assumptions_added": ["ambiguous loss is measurable via validated scale"],
+    "human_review_priority": "high"
+  },
+  "evidence": [
+    {
+      "evidence_id": "E4",
+      "text": "Participants described feeling 'stuck in limbo', with 9 of 12 interviewees reporting that they could not grieve openly because others did not recognise their childlessness as a loss.",
+      "type": "qualitative_empirical",
+      "strength": "moderate",
+      "supporting_claims": ["C3"]
+    },
+    {
+      "evidence_id": "E5",
+      "text": "Boss (2006) defines ambiguous loss as a loss that remains unclear, lacking verification or social validation.",
+      "type": "citation",
+      "strength": "moderate",
+      "supporting_claims": ["C3"]
+    }
+  ]
+}
+
+EXAMPLE 4 — WRONG evidence type (DO NOT DO THIS):
+This is an example of the most common mistake. The evidence type has been incorrectly set to match the claim type.
+{
+  "claim_id": "C4",
+  "text": "Our thematic analysis framework provides a more nuanced categorisation of involuntary childlessness.",
+  "type": "methodological_contribution",
+  "evidence": [
+    {
+      "evidence_id": "E6",
+      "text": "The framework identified 12 distinct subthemes compared to 5 in prior taxonomies.",
+      "type": "methodological_contribution",   <-- WRONG! This is a claim type, not an evidence type.
+      "strength": "strong",
+      "supporting_claims": ["C4"]
+    }
+  ]
+}
+CORRECTED: The evidence is a data point (a count of subthemes found), so the correct evidence type is "experimental".
+
+EXAMPLE 5 — NOT a claim (should be skipped):
+  "Previous research has established that infertility affects approximately 15% of couples worldwide (WHO, 2020)."
+  Reason: This is a background literature statement, not the authors' own finding.
+
+ALLOWED VALUES SUMMARY:
+- Claim type:     empirical_result | theoretical_claim | methodological_contribution
+- Evidence type:  experimental | citation | theoretical | qualitative_empirical
+- Strength:       strong | moderate | weak
+- Provenance:     author_original | endorsed_from_cited
+- Directionality: positive_correlation | negative_correlation | neutral/no_effect | unclear
+- Inference distance: low | medium | high
+- Human review priority: high | medium | low
+
+If there are no original claims in the paper, return: {"paper_id": "<Paper_ID>", "claims": []}
+
+BEFORE OUTPUTTING, VALIDATE EVERY ENTRY:
+1. For each evidence item, confirm that the "type" field is one of exactly four values: "experimental", "citation", "theoretical", or "qualitative_empirical". If you have written anything else (such as "empirical_result", "theoretical_claim", "methodological_contribution", "methodological", or "empirical"), it is WRONG — go back and fix it.
+2. For each claim, confirm that "provenance" is one of: "author_original", "endorsed_from_cited".
+3. For each model_decomposition, confirm that every variable is traceable to a literal substring in the claim text. If you inferred a variable not explicitly stated, remove it.
+4. For each hypothesis_readiness block, confirm you are annotating, not generating hypotheses.
+
+Paper_ID: {Paper_ID}
+Title: {Title}
+Content: {Content}

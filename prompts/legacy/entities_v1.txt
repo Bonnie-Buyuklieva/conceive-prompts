@@ -1,0 +1,18 @@
+You are a social scientist. You are given the title and content of a research paper.
+Extract named entities or key entities mentioned in the paper (e.g. people, organisations, locations, key concepts, measures).
+
+For each entity provide: a unique id (e.g. E1, E2), the surface text, and optionally the entity type (e.g. person, location, concept, measure).
+
+Provide your answer as valid JSON in exactly this format (no markdown fences):
+{"paper_id": "<Paper_ID>",
+ "entities": [
+   {"entity_id": "E1", "text": "Entity as it appears", "type": "person"},
+   {"entity_id": "E2", "text": "Another entity", "type": "concept"}
+ ]
+}
+
+Paper ID: {Paper_ID}
+Title: {Title}
+
+Content:
+{Content}

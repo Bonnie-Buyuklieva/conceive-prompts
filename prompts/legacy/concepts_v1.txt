@@ -1,0 +1,18 @@
+You are a social scientist. You are given the title and content of a research paper.
+Extract the main concepts (key terms, constructs, or themes) discussed in the paper.
+
+For each concept provide: a unique id (e.g. C1, C2), a label (short name), and optionally a definition or description.
+
+Provide your answer as valid JSON in exactly this format (no markdown fences):
+{"paper_id": "<Paper_ID>",
+ "concepts": [
+   {"concept_id": "C1", "label": "Concept name", "definition": "Optional definition or null"},
+   {"concept_id": "C2", "label": "Another concept", "definition": null}
+ ]
+}
+
+Paper ID: {Paper_ID}
+Title: {Title}
+
+Content:
+{Content}

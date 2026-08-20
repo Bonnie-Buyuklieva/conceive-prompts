@@ -1,0 +1,4 @@
+# Never touch line endings under prompts/ — prompt bytes must stay stable on any machine
+* text=auto
+prompts/** -text
+*.pptx binary

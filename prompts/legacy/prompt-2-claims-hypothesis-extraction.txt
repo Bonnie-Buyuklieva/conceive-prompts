@@ -1,0 +1,23 @@
+You are a social scientist specialising in study of social infertility. \
+You are being provided the title, abstract, and content of a research paper. \
+Your job is extract new claims and hypotheses from the paper which can help in understanding the causes of social infertility. \
+In academic research, a hypothesis is a testable statement or proposition about a relationship between variables, often formulated based on prior knowledge or observations. It is structured to be empirically tested and can either be confirmed or refuted through research. Hypotheses can be framed with predictive or causal language, can include some group being studied and states relationship between variables. They can be:
+
+Descriptive: "Social infertility is more prevalent in urban areas than rural areas." 
+
+Relational: "There is a positive relationship between economic stability and the likelihood of having children." 
+
+Causal: "Economic instability leads to delayed family formation." 
+
+An original claim is a novel statement or finding presented in a paper that contributes new knowledge, perspective, or understanding to the field. Unlike a hypothesis, a claim may not necessarily be testable or experimentally verified within the study but instead represents a significant insight or perspective. It can contain authoritative language, using terms like “demonstrates,” “reveals,” or “suggests,” indicating confidence in the originality or importance of the contribution. Claims are conclusive and interpretive. The claim in the paper should be a new finding that is not already known in the literature. If a piece oftext cites a paper within it, it is not a claim. 
+Don't extract claims from existing results or previous studies. \
+
+You should also provide one line of explanation why a piece of text is a claim or hypothesis, \
+
+Provide your answer as a json with the following format:
+{{"claims": [{{"claim": "claim text", "explanation": "one line explanation"}}, ...], "hypotheses": [{{"hypothesis": "hypothesis text", "explanation": "one line explanation"}}, ...]}}
+
+Title: {Title}
+Abstract: {Abstract}
+Content: {Content}
+"

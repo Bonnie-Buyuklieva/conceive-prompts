@@ -1,0 +1,227 @@
+You are an expert social science research analyst. You are given the title and content of a research paper. Your task is to extract specific structured entities from the paper using the controlled vocabulary provided below.
+
+For EACH entity found, provide:
+- The exact surface text (the phrase as it appears in the paper)
+- A normalise_value mapped to the closest term from the controlled vocabulary
+- A study_group label if the paper contains multiple distinct studies or sub-samples
+
+If an entity type is not found, include it with an empty array. Do not infer or fabricate entities — only extract what is explicitly stated. Extract ALL instances found anywhere in the paper.
+
+═══════════════════════════════════════════
+ENTITY TYPES AND CONTROLLED VOCABULARY
+═══════════════════════════════════════════
+
+1. RESEARCH_DESIGN
+The overarching design or framework for the study. Select from:
+- Descriptive Research
+- Exploratory Research
+- Explanatory Research / Causal Research
+- Comparative Research (including cross-national, cross-cultural)
+- Hypothesis Testing Research
+- Survey Research
+- Cross-sectional Research
+- Longitudinal Research (including cohort study, panel study, time series)
+- Experimental Research (including RCT, randomized control trial)
+- Quasi-Experimental Research (including natural experiment, intervention study)
+- Evaluation Research
+- Case Study
+- Pilot Study
+- Field Research
+- Collaborative Research (including action research, participatory methods)
+- Meta-Analysis / Systematic Review / Synthesis
+- Secondary Analysis
+- Mixed Methods (including multi-strategy, interdisciplinary)
+- Simulation Study
+- Other (specify)
+
+2. DATA_COLLECTION_METHOD
+How data was gathered. Select from:
+- Self-Administered Questionnaire (including postal survey, mail survey, web-based survey, online survey)
+- Structured Interview (including CATI, CAPI, telephone interview)
+- Semi-Structured Interview
+- Unstructured Interview
+- Focus Group / Group Interview
+- Observation (including participant observation, field observation, laboratory observation)
+- Measurement / Testing (including psychometric, clinical, educational measurement)
+- Administrative / Registry Data
+- Documentary Sources (including archival data, policy documents)
+- Visual Methods (including photo elicitation, video)
+- Digital / Computational Data Collection (including web scraping, sensor data, social media data)
+- Diary Method
+- Other (specify)
+
+3. ANALYSIS_METHOD
+The specific analytical technique(s) used. Select from:
+Qualitative:
+  - Thematic Analysis
+  - Discourse Analysis
+  - Conversation Analysis
+  - Content Analysis
+  - Narrative Analysis
+  - Grounded Theory
+  - Ethnographic Analysis
+  - Phenomenological Analysis
+  - Biographical Methods / Oral History
+  - Framework Analysis
+  - Corpus Analysis
+  - Documentary Analysis
+  - Interpretive Analysis (general)
+Quantitative:
+  - Descriptive Statistics
+  - Regression Analysis (including OLS, logistic, linear, non-linear, GLM, ANOVA, ANCOVA)
+  - Multilevel / Hierarchical Modelling
+  - Longitudinal Data Analysis (including panel data analysis, growth curve modelling)
+  - Event History / Survival Analysis
+  - Structural Equation Modelling (including path analysis, causal modelling)
+  - Latent Variable Models (including factor analysis, latent class analysis)
+  - Multivariate Analysis (including cluster analysis, discriminant analysis, PCA)
+  - Time Series Analysis
+  - Spatial Data Analysis (including GIS, point pattern analysis)
+  - Non-Parametric Methods
+  - Bayesian Methods
+  - Survey Estimation Methods (including weighting, small area estimation)
+  - Social Network Analysis
+  - Data Mining / Machine Learning
+  - Propensity Score Methods
+  - Difference-in-Differences
+  - Instrumental Variables
+  - Regression Discontinuity
+Mixed Methods:
+  - Sequential Explanatory
+  - Sequential Exploratory
+  - Concurrent / Convergent Design
+  - Other Mixed Methods
+
+4. EPISTEMOLOGY
+The philosophical or epistemological stance. Select from:
+- Positivism / Post-Positivism
+- Critical Realism
+- Interpretivism / Constructivism / Social Constructionism
+- Pragmatism
+- Feminism / Feminist Epistemology
+- Phenomenology
+- Hermeneutics
+- Critical Theory
+- Postmodernism / Post-Structuralism
+- Other (specify)
+
+5. THEORETICAL_FRAMEWORK
+The substantive theoretical or conceptual framework(s). This is domain-specific and NOT constrained to a fixed list — extract as stated in the paper. Examples include: social cognitive theory, rational choice theory, structuration theory, ecological systems theory, institutional theory, intersectionality, etc.
+
+6. SAMPLING_STRATEGY
+How participants or cases were selected. Select from:
+- Simple Random Sample
+- Stratified Random Sample
+- Cluster Sample
+- Multi-Stage Sample
+- Systematic Sample
+- Quota Sample
+- Purposive / Judgmental Sample
+- Convenience / Opportunity Sample
+- Snowball Sample
+- Volunteer Sample
+- Total Population / Census
+- Theoretical Sampling
+- Maximum Variation Sampling
+- Critical Case Sampling
+- Other (specify)
+
+7. STUDY_YEAR
+Year(s) the study covers. Distinguish:
+- data_collection_year: when data was gathered
+- publication_year: when the paper was published
+- reference_period: the time period the data describes
+
+8. COUNTRY
+Country or countries where the study was conducted or data originates from. Use ISO country names.
+
+9. GEOGRAPHY
+Other geographic or institutional descriptors:
+- city, state/province, region
+- urban / rural / peri-urban
+- institution type (e.g., "public university", "primary care clinic", "secondary schools")
+- catchment area or administrative boundary
+
+10. SAMPLE_SIZE
+Exact sample size(s) reported. Provide:
+- text: as written in the paper
+- normalise_value: numeric value
+- band: one of "1-10", "11-25", "26-50", "51-100", "101-500", "501-1000", "1001-10000", "10001-100000", "100001+"
+- sample_type: one of "individuals", "households", "organisations", "documents", "events", "other"
+
+11. SAMPLE_AGE
+Age groups or life stages of participants. Normalise to both:
+- age_range: e.g., "18-24", "65+"
+- life_stage: one of "neonates (0-1)", "early childhood (1-5)", "children (6-11)", "adolescents (12-17)", "young adults (18-25)", "adults (26-64)", "older adults (65+)", "mixed/all ages"
+
+12. CONTROL_VARIABLE
+Variables used as controls, covariates, moderators, confounders, matching variables, or stratification variables. Extract each one separately.
+
+13. OUTCOME_VARIABLE
+Primary and secondary outcome, dependent, or response variables. Extract each one separately.
+
+14. DATA_QUALITY_METHODS
+Methods used to address data quality. Select from:
+- Reliability testing (e.g., Cronbach's alpha, inter-rater reliability)
+- Validity testing (e.g., construct validity, criterion validity)
+- Missing data handling (e.g., multiple imputation, listwise deletion)
+- Sensitivity analysis
+- Robustness checks
+- Member checking / respondent validation
+- Triangulation
+- Audit trail
+- Other (specify)
+
+═══════════════════════════════════════════
+OUTPUT FORMAT
+═══════════════════════════════════════════
+
+Provide your answer as valid JSON (no markdown fences):
+{
+  "paper_id": "<Paper_ID>",
+  "entities": [
+    {
+      "entity_id": "E1",
+      "type": "RESEARCH_DESIGN",
+      "text": "longitudinal survey",
+      "normalise_value": "Longitudinal Research",
+      "study_group": null
+    },
+    {
+      "entity_id": "E2",
+      "type": "ANALYSIS_METHOD",
+      "text": "multilevel logistic regression",
+      "normalise_value": "Multilevel / Hierarchical Modelling",
+      "study_group": null
+    },
+    {
+      "entity_id": "E3",
+      "type": "SAMPLE_SIZE",
+      "text": "2,847 respondents",
+      "normalise_value": "2847",
+      "band": "1001-10000",
+      "sample_type": "individuals",
+      "study_group": null
+    },
+    {
+      "entity_id": "E4",
+      "type": "SAMPLING_STRATEGY",
+      "text": "stratified random sample",
+      "normalise_value": "Stratified Random Sample",
+      "study_group": null
+    },
+    {
+      "entity_id": "E5",
+      "type": "DATA_QUALITY_METHODS",
+      "text": "Cronbach's alpha of 0.87",
+      "normalise_value": "Reliability testing",
+      "study_group": null
+    }
+  ]
+}
+
+Paper ID: {Paper_ID}
+Title: {Title}
+
+Content:
+{Content}

@@ -1,0 +1,42 @@
+You are a data scientist and qualitative researcher. You are given the title and a specific, extracted claim from a research paper.
+Extract the main concepts (key terms, constructs, or variables) present in the claim and decompose them into testable components for a statistical model.
+
+For each concept provide:
+
+concept_id: A unique id (e.g. Con1, Con2).
+
+text: A text label (short name).
+
+definition: Optional definition or description.
+
+model_role: Classify the concept's function in the claim ("independent_variable", "dependent_variable", "moderator", or "background_context").
+
+verbatim_grounding: The exact, literal substring from the input claim that proves this concept exists, maintaining the human-auditable paper trail.
+
+causal_target_id: If this concept acts upon another (e.g., it is an IV or moderator), provide the concept_id of the affected concept. Otherwise, null.
+
+directionality: If a target exists, classify the relationship ("positive_correlation", "negative_correlation", "neutral/no_effect", or "unclear"). Otherwise, null.
+
+Provide your answer as valid JSON in exactly this format (no markdown fences):
+{
+"paper_id": "<Paper_ID>",
+"source_claim": "",
+"concepts": [
+{
+"concept_id": "Con1",
+"text": "Concept name",
+"definition": "Optional definition or null",
+"model_role": "independent_variable",
+"verbatim_grounding": "",
+"causal_target_id": "Con2",
+"directionality": "negative_correlation"
+}
+]
+}
+
+If there are no concepts in the claim, return: {"paper_id": "<Paper_ID>", "source_claim": "", "concepts": []}
+
+Paper ID: {Paper_ID}
+Title: {Title}
+Content (Auditable Claim):
+{Content}

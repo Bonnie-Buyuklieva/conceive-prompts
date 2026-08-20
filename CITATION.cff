@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use these prompts, please cite this repository."
+type: software
+title: "CONCEIVE: CONcept and Claim Extraction with Interdisciplinary Validation of Evidence"
+abstract: >-
+  Versioned, citable LLM prompts for auditable claim and concept extraction
+  from social-science and interdisciplinary literature, developed on the case study of social
+  (in)fertility under British Academy Talent Development Award TDA23\230021.
+authors:
+  - family-names: Buyuklieva
+    given-names: Boyana
+    affiliation: University College London
+    orcid: "https://orcid.org/0000-0002-3583-2080"
+license: CC-BY-4.0
+repository-code: "https://github.com/Bonnie-Buyuklieva/conceive-prompts"
+keywords:
+  - prompt engineering
+  - large language models
+  - computational social science
+  - systematic review
+  - claim extraction
+  - social infertility
+  - demography
+
